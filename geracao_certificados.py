@@ -59,12 +59,12 @@ def adicionar_uuid_pdf(filled_pdf_path, output_path, font_path):
     return certificado_uuid
 
 
-def processar_certificados(modulo, nomes_alunos, nome_lider, templates_dir, output_dir, font_path):
+def processar_certificados(modulo, nomes_alunos, nome_lider, templates_dir, output_dir, json_output_dir, font_path):
     """Processa os certificados para todos os alunos e salva os dados em um arquivo JSON."""
     os.makedirs(output_dir, exist_ok=True)
     certificados = []
 
-    json_path = os.path.join(output_dir, "certificados.json")
+    json_path = os.path.join(json_output_dir, "certificados.json")
     if os.path.exists(json_path) and os.path.getsize(json_path) > 0:
         with open(json_path, "r") as f:
             certificados_data = json.load(f)
@@ -108,11 +108,12 @@ def main():
 
     templates_dir = './templates'
     output_dir = './temp'
+    json_output_dir = './'
     # Caminho para a fonte (pode ser .ttf ou .otf)
     font_path = './assets/arial.ttf'
 
     processar_certificados(modulo, nomes_alunos, nome_lider,
-                           templates_dir, output_dir, font_path)
+                           templates_dir, output_dir, json_output_dir, font_path)
 
 
 if __name__ == "__main__":
