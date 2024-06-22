@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file, jsonify
+from flask import Flask, request, send_file, jsonify, render_template
 import os
 import zipfile
 import uuid
@@ -12,7 +12,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
 from datetime import datetime
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', template_folder='templates')
 
 
 def preencher_campos_pdf(template_path, nome_aluno, nome_lider, output_path):
@@ -105,17 +105,21 @@ def processar_certificados(modulo, nomes_alunos, nome_lider, templates_dir, outp
     return certificados
 
 
-@app.route('/generate', methods=['POST'])
+@app.route("/")
+def index():
+    return render_template('index.html')
+
+
+@app.route('/api/v1/generate', methods=['POST'])
 def generate_certificates():
     nomes_alunos = request.form.get('students').splitlines()
     nome_lider = request.form.get('leaderName')
     modulo = request.form.get('course')
 
-    templates_dir = './templates'
+    templates_dir = './templates/pdf'
     output_dir = './temp'
     json_output_dir = './'
-    # Caminho para a fonte (pode ser .ttf ou .otf)
-    font_path = './assets/arial.ttf'
+    font_path = './static/assets/arial.ttf'
     os.makedirs(output_dir, exist_ok=True)
 
     certificados = processar_certificados(

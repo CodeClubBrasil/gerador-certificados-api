@@ -1,0 +1,114 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Code Clube: Gerador de Certificado</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <style type="text/css">
+        /* Tela grande */
+        @media (min-width: 768px) {
+            .panel-default {
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+
+            .alert {
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+        }
+
+        .navbar-brand {
+            padding-top: 12px;
+        }
+
+        .aw-link-panel {
+            float: right;
+            padding: 0px;
+        }
+
+        .aw-titulo-panel {
+            float: left;
+            padding-top: 2px;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar navbar-static-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <img width="150" height="70" src="{{ url_for('static', filename='img/logo.png') }}">
+                <b style="font-size: large;">Gerador de Certificados</b>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <section class="card">
+            <form method="POST" action="/api/v1/generate">
+
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <label for="students" class="col-sm-1 col-form-label">Alunos</label>
+                        <div class="col-sm-11">
+                            <textarea name="students" placeholder="Informe um nome por linha" class="form-control"
+                                id="students" cols="60" rows="10"></textarea>
+                        </div>
+                    </div><!-- row mb-3 -->
+                    <div class="row mb-3">
+                        <label for="leaderName" class="col-sm-1 col-form-label">Líder</label>
+                        <div class="col-sm-11">
+                            <input type="text" placeholder="Nome do Lider do Clube" class="form-control" id="leaderName"
+                                name="leaderName" value="">
+                        </div>
+                    </div><!-- row mb-3 -->
+                    <div class="row mb-3">
+                        <label for="course" class="col-sm-1 col-form-label">Curso</label>
+                        <div class="col-sm-11">
+                            <select class="form-select" name="course" id="course" aria-label="Floating label select">
+                                <option selected>Selecione o Curso</option>
+                                <option value="python1">Python 1</option>
+                                <option value="python2">Python 2</option>
+                                <option value="scratch1">Scratch 1</option>
+                                <option value="scratch2">Scratch 2</option>
+                                <option value="scratch3">Scratch 3</option>
+                                <option value="web1">Web 1</option>
+                                <option value="web2">Web 2</option>
+                                <option value="general">Geral</option>
+                            </select>
+                        </div>
+                    </div><!-- row mb-3 -->
+                    <div class="row justify-content-end text-right">
+                        <div class="col-8">
+                            <button type="submit" class="btn btn-primary btn-lg">Gerar certificados</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div><!-- container-fluid -->
+
+    <div class="container-fluid">
+        <div class="row text-right">
+            <div class="col pt-2">
+                <small>v0.6 <a href="/swagger-ui.html#/Gerador_de_Certificados" target="_blank">[API]</a></small>
+            </div>
+        </div>
+    </div><!-- container-fluid -->
+
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>
