@@ -25,14 +25,17 @@ Este projeto é uma aplicação web para gerar certificados personalizados para 
    cd code-clube-certificados
 
 2. Crie um ambiente virtual: 
-    ```python -m venv venv
+    ```bash
+    python -m venv venv
     source venv/bin/activate  # No Windows use `venv\Scripts\activate`
 
 3. Instale dependências
-    ```pip install -r requirements.txt
+    ```bash
+    pip install -r requirements.txt
 
 4. Configure a estrutura de diretórios:
-    ```mkdir -p templates/pdf
+    ```bash
+    mkdir -p templates/pdf
     mkdir -p static/assets
 
 5. Adicione os arquivos PDF de templates em `templates/pdf` e a fonte `arial.ttf` em `static/assets`.
@@ -42,7 +45,8 @@ Este projeto é uma aplicação web para gerar certificados personalizados para 
 ### Executando a Aplicação
 
 Para iniciar o servidor Flask, execute: 
-    ```python app.py
+    ```bash
+    python app.py
 
 A aplicação estará disponível em `http://127.0.0.1:5000`.
 
@@ -68,7 +72,8 @@ Gera certificados com base nos dados fornecidos.
 * `course` (texto): Nome do curso (ex.: python1, scratch2).
 
 #### Exemplo de requisição
-```curl -X POST http://127.0.0.1:5000/api/v1/generate \
+```bash
+curl -X POST http://127.0.0.1:5000/api/v1/generate \
     -F "students=Aluno1\nAluno2\nAluno3" \
     -F "leaderName=Líder do Clube" \
     -F "course=python1" \
