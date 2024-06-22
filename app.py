@@ -11,8 +11,18 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
 from datetime import datetime
+from pymongo import MongoClient
+from dotenv import load_dotenv
+
+# Carregar variáveis de ambiente do arquivo .env
+load_dotenv()
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
+
+# Conectar ao MongoDB
+mongo_uri = os.getenv('MONGO_URI')
+client = MongoClient(mongo_uri)
+db = client['ccbrcertificados']  # Nome do banco de dados
 
 
 def preencher_campos_pdf(template_path, nome_aluno, nome_lider, output_path):
@@ -64,43 +74,31 @@ def adicionar_uuid_pdf(filled_pdf_path, output_path, font_path):
     return certificado_uuid
 
 
-def processar_certificados(modulo, nomes_alunos, nome_lider, templates_dir, output_dir, json_output_dir, font_path):
+def processar_certificados(modulo, nomes_alunos, nome_lider, templates_dir, output_dir, font_path):
     """Processa os certificados para todos os alunos e salva os dados em um arquivo JSON."""
     os.makedirs(output_dir, exist_ok=True)
     certificados = []
 
-    json_path = os.path.join(json_output_dir, 'certificados.json')
-    if os.path.exists(json_path) and os.path.getsize(json_path) > 0:
-        with open(json_path, "r") as f:
-            certificados_data = json.load(f)
-    else:
-        certificados_data = []
-
     for i, nome_aluno in enumerate(nomes_alunos):
-        output_filename = f'certificado_{modulo}_{nome_aluno}.pdf'
         template_path = os.path.join(templates_dir, f'{modulo}.pdf')
-        output_path = os.path.join(output_dir, output_filename)
+        output_path = os.path.join(output_dir, f"certificado_{modulo}_{nome_aluno}.pdf")
 
         try:
-            filled_pdf_path = preencher_campos_pdf(
-                template_path, nome_aluno, nome_lider, output_path)
-            certificado_uuid = adicionar_uuid_pdf(
-                filled_pdf_path, output_path, font_path)
-            certificados.append(
-                {'path': output_path, 'uuid': certificado_uuid})
+            filled_pdf_path = preencher_campos_pdf(template_path, nome_aluno, nome_lider, output_path)
+            certificado_uuid = adicionar_uuid_pdf(filled_pdf_path, output_path, font_path)
+            certificados.append({'path': output_path, 'uuid': certificado_uuid})
 
-            certificados_data.append({
+            # Inserir dados no MongoDB
+            certificado_data = {
                 "uuid": certificado_uuid,
                 "aluno": nome_aluno,
                 "lider": nome_lider,
                 "modulo": modulo,
                 "arquivo": output_path
-            })
+            }
+            db.certificados.insert_one(certificado_data)
         except Exception as e:
             print(f"Erro ao processar certificado para {nome_aluno}: {e}")
-
-    with open(json_path, "w") as f:
-        json.dump(certificados_data, f, indent=4)
 
     return certificados
 
@@ -118,12 +116,11 @@ def generate_certificates():
 
     templates_dir = './templates/pdf'
     output_dir = './temp'
-    json_output_dir = './'
     font_path = './static/assets/arial.ttf'
     os.makedirs(output_dir, exist_ok=True)
 
     certificados = processar_certificados(
-        modulo, nomes_alunos, nome_lider, templates_dir, output_dir, json_output_dir, font_path)
+        modulo, nomes_alunos, nome_lider, templates_dir, output_dir, font_path)
 
     # Se houver mais de dois certificados, criar um arquivo zip
     if len(certificados) > 1:
