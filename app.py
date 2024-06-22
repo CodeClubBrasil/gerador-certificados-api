@@ -69,7 +69,7 @@ def processar_certificados(modulo, nomes_alunos, nome_lider, templates_dir, outp
     os.makedirs(output_dir, exist_ok=True)
     certificados = []
 
-    json_path = os.path.join(json_output_dir, "certificados.json")
+    json_path = os.path.join(json_output_dir, 'certificados.json')
     if os.path.exists(json_path) and os.path.getsize(json_path) > 0:
         with open(json_path, "r") as f:
             certificados_data = json.load(f)
@@ -77,9 +77,9 @@ def processar_certificados(modulo, nomes_alunos, nome_lider, templates_dir, outp
         certificados_data = []
 
     for i, nome_aluno in enumerate(nomes_alunos):
+        output_filename = f'certificado_{modulo}_{nome_aluno}.pdf'
         template_path = os.path.join(templates_dir, f'{modulo}.pdf')
-        output_path = os.path.join(output_dir, f"certificado_{
-                                   modulo}_{nome_aluno}.pdf")
+        output_path = os.path.join(output_dir, output_filename)
 
         try:
             filled_pdf_path = preencher_campos_pdf(
@@ -129,9 +129,9 @@ def generate_certificates():
     if len(certificados) > 1:
 
         # Obter a data atual no formato AAAAMMDD
-        data_atual = datetime.now().strftime("%Y%m%d")
+        data_atual = datetime.now().strftime('%Y%m%d')
 
-        output_filename = f"{data_atual}_{modulo}_certificados.zip"
+        output_filename = f'{data_atual}_{modulo}_certificados.zip'
 
         zip_path = os.path.join(output_dir, output_filename)
         with zipfile.ZipFile(zip_path, 'w') as zipf:
