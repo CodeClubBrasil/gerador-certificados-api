@@ -105,7 +105,7 @@ def processar_certificados(modulo, nomes_alunos, nome_lider, templates_dir, outp
     return certificados
 
 
-@app.route('/generate', methods=['POST'])
+@app.route('/api/v1/generate', methods=['POST'])
 def generate_certificates():
     nomes_alunos = request.form.get('students').splitlines()
     nome_lider = request.form.get('leaderName')
