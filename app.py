@@ -21,8 +21,11 @@ app = Flask(__name__, static_folder='static', template_folder='templates')
 
 # Conectar ao MongoDB
 mongo_uri = os.getenv('MONGO_URI')
-client = MongoClient(mongo_uri)
-db = client['ccbrcertificados']  # Nome do banco de dados
+
+def get_db():
+    client = MongoClient(mongo_uri)
+    db = client['ccbrcertificados']
+    return db
 
 
 def preencher_campos_pdf(template_path, nome_aluno, nome_lider, output_path):
@@ -78,6 +81,8 @@ def processar_certificados(modulo, nomes_alunos, nome_lider, templates_dir, outp
     """Processa os certificados para todos os alunos e salva os dados em um arquivo JSON."""
     os.makedirs(output_dir, exist_ok=True)
     certificados = []
+
+    db = get_db()
 
     for i, nome_aluno in enumerate(nomes_alunos):
         template_path = os.path.join(templates_dir, f'{modulo}.pdf')
