@@ -1,4 +1,6 @@
+from flask import Flask, request, send_file, jsonify
 import os
+import zipfile
 import uuid
 import json
 from io import BytesIO
@@ -8,6 +10,9 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
+from datetime import datetime
+
+app = Flask(__name__)
 
 
 def preencher_campos_pdf(template_path, nome_aluno, nome_lider, output_path):
@@ -74,7 +79,7 @@ def processar_certificados(modulo, nomes_alunos, nome_lider, templates_dir, outp
     for i, nome_aluno in enumerate(nomes_alunos):
         template_path = os.path.join(templates_dir, f'{modulo}.pdf')
         output_path = os.path.join(output_dir, f"certificado_{
-                                   i+1}_{nome_aluno}.pdf")
+                                   modulo}_{nome_aluno}.pdf")
 
         try:
             filled_pdf_path = preencher_campos_pdf(
@@ -100,21 +105,39 @@ def processar_certificados(modulo, nomes_alunos, nome_lider, templates_dir, outp
     return certificados
 
 
-def main():
-    modulo = input("Digite o nome do modulo/template: ").strip()
-    nomes_alunos = input(
-        "Digite os nomes dos alunos separados por linha: ").strip().split("\n")
-    nome_lider = input("Digite o nome do líder do clube: ").strip()
+@app.route('/generate', methods=['POST'])
+def generate_certificates():
+    nomes_alunos = request.form.get('students').splitlines()
+    nome_lider = request.form.get('leaderName')
+    modulo = request.form.get('course')
 
     templates_dir = './templates'
     output_dir = './temp'
     json_output_dir = './'
     # Caminho para a fonte (pode ser .ttf ou .otf)
     font_path = './assets/arial.ttf'
+    os.makedirs(output_dir, exist_ok=True)
 
-    processar_certificados(modulo, nomes_alunos, nome_lider,
-                           templates_dir, output_dir, json_output_dir, font_path)
+    certificados = processar_certificados(
+        modulo, nomes_alunos, nome_lider, templates_dir, output_dir, json_output_dir, font_path)
+
+    # Se houver mais de dois certificados, criar um arquivo zip
+    if len(certificados) > 1:
+
+        # Obter a data atual no formato AAAAMMDD
+        data_atual = datetime.now().strftime("%Y%m%d")
+
+        output_filename = f"{data_atual}_{modulo}_certificados.zip"
+
+        zip_path = os.path.join(output_dir, output_filename)
+        with zipfile.ZipFile(zip_path, 'w') as zipf:
+            for certificado in certificados:
+                zipf.write(certificado['path'],
+                           os.path.basename(certificado['path']))
+        return send_file(zip_path, as_attachment=True)
+    else:
+        return send_file(certificados[0]['path'], as_attachment=True)
 
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    app.run(debug=True)
