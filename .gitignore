@@ -3,3 +3,4 @@
 certificados.json
 form_debug.html
 .env
+__pycache__
