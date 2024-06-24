@@ -82,20 +82,30 @@ curl -X POST http://127.0.0.1:5000/api/v1/generate \
 
 ## Estrutura do Projeto
 
-```code-clube-certificados/
-    ├── app.py
-    ├── limpar_temp.py
-    ├── templates/
-    │   └── index.html
-    ├── static/
-    │   ├── img/
-    │   │   └── logo.png
-    │   ├── css/
-    │   │   └── style.css
-    │   └── assets/
-    │       └── arial.ttf
-    ├── requirements.txt
-    └── README.md
+```
+code-clube-certificados/
+├── app.py
+├── .env
+├── requirements.txt
+├── README.md
+├── run.sh
+├── config.py
+├── limpar_temp.py
+├── certificados/
+│   ├── __init__.py
+│   ├── views.py
+│   ├── utils.py
+│   └── models.py
+├── templates/
+│   └── index.html
+├── static/
+│   ├── img/
+│   │   └── logo.png
+│   ├── css/
+│   │   └── style.css
+│   └── assets/
+│       └── arial.ttf
+└── temp/
 ```
 
 ## Tecnologias
