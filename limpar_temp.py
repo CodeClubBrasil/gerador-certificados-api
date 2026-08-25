@@ -1,10 +1,10 @@
 import os
 import shutil
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 def limpar_diretorio_temp(diretorio_temp):
-    now = datetime.now()
+    now = datetime.now(timezone.utc)
     print(f"Iniciando limpeza do diretório {diretorio_temp} às {now}")
     for filename in os.listdir(diretorio_temp):
         file_path = os.path.join(diretorio_temp, filename)
@@ -14,8 +14,9 @@ def limpar_diretorio_temp(diretorio_temp):
             elif os.path.isdir(file_path):
                 shutil.rmtree(file_path)
             print(f"Removido: {file_path}")
-        except Exception as e:
+        except (OSError, shutil.Error) as e:
             print(f"Erro ao deletar {file_path}: {e}")
+
 
 
 if __name__ == "__main__":
