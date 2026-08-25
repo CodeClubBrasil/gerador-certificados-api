@@ -62,16 +62,30 @@ A aplicação estará disponível em `http://127.0.0.1:5000`.
 
 ### Endpoints da API
 
-`POST /api/v1/generate`
+#### `GET /health`
+Verifica a saúde do serviço e a conectividade com o MongoDB (ideal para pings de keep-alive e monitoramento).
+
+**Exemplo de resposta (200 OK):**
+```json
+{
+  "status": "healthy",
+  "database": {
+    "connected": true,
+    "message": "connected"
+  }
+}
+```
+
+#### `POST /api/v1/generate`
 Gera certificados com base nos dados fornecidos.
 
-#### Parâmetros do Formulário
+##### Parâmetros do Formulário
 
 * `students` (texto): Nomes dos alunos, um por linha.
 * `leaderName` (texto): Nome do líder do clube.
 * `course` (texto): Nome do curso (ex.: python1, scratch2).
 
-#### Exemplo de requisição
+##### Exemplo de requisição
 ```bash
 curl -X POST http://127.0.0.1:5000/api/v1/generate \
     -F "students=Aluno1\nAluno2\nAluno3" \
@@ -79,6 +93,19 @@ curl -X POST http://127.0.0.1:5000/api/v1/generate \
     -F "course=python1" \
     --output result.zip
 ```
+
+## Variáveis de Ambiente (.env)
+
+| Variável | Padrão | Descrição |
+| :--- | :--- | :--- |
+| `MONGO_URI` | *Obrigatório* | URI de conexão com o MongoDB / Mongo Atlas. |
+| `MONGO_DB_NAME` | `ccbrcertificados` | Nome do banco de dados no MongoDB. |
+| `MONGO_SERVER_SELECTION_TIMEOUT_MS` | `5000` | Timeout para seleção do servidor (em ms). |
+| `MONGO_CONNECT_TIMEOUT_MS` | `10000` | Timeout para estabelecimento de conexão (em ms). |
+| `MONGO_SOCKET_TIMEOUT_MS` | `20000` | Timeout de socket/operações inativas (em ms). |
+| `MONGO_MAX_IDLE_TIME_MS` | `120000` | Tempo máximo de ociosidade das conexões no pool (em ms). |
+| `MONGO_RETRY_WRITES` | `true` | Habilita retentativa automática de escrita (*retryable writes*). |
+| `FLASK_DEBUG` | `false` | Ativa o modo de depuração do Flask. |
 
 ## Estrutura do Projeto
 
@@ -93,9 +120,15 @@ code-clube-certificados/
 ├── limpar_temp.py
 ├── certificados/
 │   ├── __init__.py
+│   ├── db.py
 │   ├── views.py
 │   ├── utils.py
 │   └── models.py
+├── tests/
+│   ├── __init__.py
+│   ├── test_db.py
+│   ├── test_health.py
+│   └── test_models.py
 ├── templates/
 │   └── index.html
 ├── static/

@@ -1,11 +1,7 @@
-from pymongo import MongoClient
 from marshmallow import Schema, fields, post_load
-from flask import current_app
 
-def get_db():
-    client = MongoClient(current_app.config['MONGO_URI'])
-    db = client['ccbrcertificados']
-    return db
+from .db import get_db
+
 
 class Certificado:
     def __init__(self, uuid, aluno, lider, modulo, arquivo):
